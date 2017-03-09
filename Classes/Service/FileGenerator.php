@@ -617,9 +617,12 @@ class FileGenerator
             $this->mkdir_deep($publicResourcesDirectory, 'Icons');
             $this->iconsDirectory = $publicResourcesDirectory . 'Icons/';
             $needsRelationIcon = false;
-            foreach ($this->extension->getDomainObjects() as $domainObject) {
-                if ($domainObject->hasRelations()) {
-                    $needsRelationIcon = true;
+            $domainObjects = $this->extension->getDomainObjects();
+            if (!empty($domainObjects)) {
+                foreach ($domainObjects as $domainObject) {
+                    if ($domainObject->hasRelations()) {
+                        $needsRelationIcon = true;
+                    }
                 }
             }
             if ($needsRelationIcon) {
@@ -628,18 +631,25 @@ class FileGenerator
                     $this->iconsDirectory . 'relation.gif'
                 );
             }
-            foreach ($this->extension->getBackendModules() as $backendModule) {
-                $this->upload_copy_move(
-                    $this->codeTemplateRootPath. 'Resources/Public/Icons/user_extension.svg',
-                    $this->iconsDirectory . 'user_mod_' . $backendModule->getKey() . '.svg'
-                );
+            $backendModules = $this->extension->getBackendModules();
+            if (!empty($backendModules)) {
+                foreach ($backendModules as $backendModule) {
+                    $this->upload_copy_move(
+                        $this->codeTemplateRootPath. 'Resources/Public/Icons/user_extension.svg',
+                        $this->iconsDirectory . 'user_mod_' . $backendModule->getKey() . '.svg'
+                    );
+                }
             }
-            foreach ($this->extension->getPlugins() as $plugin) {
-                $this->upload_copy_move(
-                    $this->codeTemplateRootPath. 'Resources/Public/Icons/user_extension.svg',
-                    $this->iconsDirectory . 'user_plugin_' . $plugin->getKey() . '.svg'
-                );
+            $frontendPlugins = $this->extension->getPlugins();
+            if (!empty($frontendPlugins)) {
+                foreach ($frontendPlugins as $plugin) {
+                    $this->upload_copy_move(
+                        $this->codeTemplateRootPath. 'Resources/Public/Icons/user_extension.svg',
+                        $this->iconsDirectory . 'user_plugin_' . $plugin->getKey() . '.svg'
+                    );
+                }
             }
+
         } catch (\Exception $e) {
             throw new \Exception('Could not create public resources folder, error: ' . $e->getMessage());
         }
